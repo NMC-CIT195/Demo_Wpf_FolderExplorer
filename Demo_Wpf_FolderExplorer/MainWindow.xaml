@@ -3,10 +3,50 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Demo_Wpf_FolderExplorer"
+        xmlns:my="clr-namespace:Demo_Wpf_FolderExplorer"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="Folder Explorer" Height="350" Width="525">
+    <Window.Resources>
+        <ObjectDataProvider x:Key="RootFolderDataProvider">
+            <ObjectDataProvider.ObjectInstance>
+                <my:Folder FullPath="C:\users\velisj\pictures"/>
+            </ObjectDataProvider.ObjectInstance>
+        </ObjectDataProvider>
+
+        <HierarchicalDataTemplate 
+		    DataType    = "{x:Type my:Folder}"
+            ItemsSource = "{Binding Path=SubFolders}">
+            <TextBlock Text="{Binding Path=Name}" />
+        </HierarchicalDataTemplate>
+    </Window.Resources>
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="2*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TreeView
+            Grid.ColumnSpan="1"
+            Grid.RowSpan="2"
+            Margin="0,0,0,0" 
+            Name="treeView1" >
+            <TreeViewItem 
+                ItemsSource="{Binding Path=SubFolders, Source={StaticResource RootFolderDataProvider}}" 
+                Header="Folders"  />
+        </TreeView>
+        <ListView Name="listView1" 
+		ItemsSource="{Binding Path=SelectedItem.SubFolders, ElementName=treeView1, Mode=OneWay}" 
+		Grid.Column="1" 
+		Grid.RowSpan="1" />
+
+        <ListView Name="listView2" 
+		ItemsSource="{Binding Path=SelectedItem.Files, ElementName=treeView1, Mode=OneWay}" 
+		Grid.Column="1" 
+		Grid.Row="1" />
+
+
     </Grid>
 </Window>
